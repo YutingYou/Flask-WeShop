@@ -8,16 +8,15 @@ from .extensions import db, login_manager, bootstrap
 __all__ = ['create_app']
 
 
-def create_app(config_name=None, app_name=None):
+def create_app(config_name=None):
     """Create a Flask app."""
 
-    if app_name is None:
-        app_name = 'Flask-Weshop'
+    app = Flask(__name__, template_folder='templates')
 
-    app = Flask(app_name)
     configure_app(app, config_name)
     configure_blueprints(app)
     configure_extensions(app)
+    configure_error_handlers(app)
 
     return app
 
@@ -45,9 +44,15 @@ def configure_blueprints(app):
     app.register_blueprint(weshop_blueprint, url_prefix='/weshop')
 
 
+def configure_error_handlers(app):
 
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template("404.html"), 404
 
-
+    @app.errorhandler(403)
+    def forbidden(error):
+        return render_template('403.html'), 403
 
 
 
