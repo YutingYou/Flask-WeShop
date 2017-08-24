@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='flappy_bird/css/bird.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='flappy_bird/css/animation.css') }}" />
+{% endblock %}
+
+
+{% block page_content %}
+	<div class="fb_container">
+		<div class="startPage">
+			<div class="head">
+				<img src="{{ url_for('static', filename='flappy_bird/images/head.jpg') }} " alt="" />
+				<span class="bird1"></span>
+			</div>
+			<div class="btnwrap">
+				<button class="startBtn"></button>
+				<button class="submitBtn"></button>
+			</div>
+		</div>
+		<div class="slidewrap"></div>
+		<div class="gamewrap">
+			<span class="flybird downBird"></span>
+			<ul class="colwrap">
+				<!--<li class="colcon">
+					<div class="coltop">
+						<span class="tophead"></span>
+					</div>
+					<div class="colbot">
+						<span class="bothead"></span>
+					</div>
+				</li>-->
+			</ul>
+			<div class="scorewrap">
+{#				<img src="{{ url_for('static', filename='flappy_bird/images/0.jpg') }}" alt="">#}
+{#				<img src="{{ url_for('static', filename='flappy_bird/images/0.jpg') }}" alt="">#}
+			</div>
+		</div>
+
+		<div class="over">
+			<span></span>
+			<a class="ok" href=""></a>
+		</div>
+
+	</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='flappy_bird/js/bird.js') }}"></script>
+{% endblock %}
