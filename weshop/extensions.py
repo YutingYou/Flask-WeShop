@@ -8,7 +8,8 @@ db = SQLAlchemy()
 from flask_login import LoginManager
 login_manager = LoginManager()
 
-
+from flask_moment import Moment
+moment = Moment()
 
 
 

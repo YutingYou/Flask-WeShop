@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from flask import Blueprint
 
-if __name__ == '__main__':
-    pass
+auth = Blueprint('auth', __name__)
+
+from . import views

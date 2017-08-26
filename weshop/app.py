@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from configs.config import config as app_config
 from flask import Flask, render_template
-from .extensions import db, login_manager, bootstrap
+from .extensions import db, login_manager, bootstrap, moment
 
 
 # For import *
@@ -32,6 +32,17 @@ def configure_extensions(app):
 
     # flask-sqlalchemy
     db.init_app(app)
+
+    # flask-login
+    login_manager.init_app(app)
+    login_manager.session_protection = 'strong'
+    login_manager.login_view = 'auth.login'
+
+    # flask-bootstrap
+    bootstrap.init_app(app)
+
+    # flask-moment
+    moment.init_app(app)
 
 
 def configure_blueprints(app):

@@ -1,0 +1,35 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Let's Rock{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='star.gif') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='star.gif') }}" type="image/x-icon">
+{% endblock %}
+
+{#{% block navbar %}#}
+{#<div class="navbar" role="navigation" style="box-shadow: 0px 0px 2px gray ">#}
+{#    <div class="container">#}
+{#        <div class="navbar-text" style="text-align: center; font-size: 20px">福清益田桶装水</div>#}
+{#    </div>#}
+{#</div>#}
+{#{% endblock %}#}
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
