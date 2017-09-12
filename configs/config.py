@@ -9,10 +9,17 @@ class Config:
 
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
 
-    WECHAT_TOKEN = ""
-    WECHAT_APP_ID = ""
-    WECHAT_AES_KEY = ""
-    WECHAT_APP_SECRET = ""
+    # 微信公众号配置
+    WECHAT_APP_ID = ''
+    WECHAT_TOKEN = ''
+    WECHAT_AES_KEY = ''
+    WECHAT_APP_SECRET = ''
+
+    # 微信支付配置
+    WEPAY_API_KEY = ''
+    WEPAY_MCH_ID = ''
+    WEPAY_MCH_CERT_PATH = ''
+    WEPAY_MCH_KEY_PATH = ''
 
     @staticmethod
     def init_app(app):
