@@ -26,11 +26,10 @@
 ![mapping选项卡.png](http://upload-images.jianshu.io/upload_images/3156309-c4b08538aaf37675.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 3. 配置远程解释器
  - Settings -> Project: xxxxx -> project interpreter -> 小齿轮图标 -> add remote，解释器路径自己改为virtualenv中，下图只是示例。
-![interpreter.png](http://upload-images.jianshu.io/upload_images/3156309-6bcb5ed009dacda7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![interpreter.png](http://upload-images.jianshu.io/upload_images/3156309-6bcb5ed009dacda7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800)
 
 4. 配置每次修改源码自动上传源码到服务器，Tools -> Deployment -> option，`upload changed files automatically to the default server`
-![sftp_option.png](http://upload-images.jianshu.io/upload_images/3156309-b2d9b60a36a523bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![sftp_option.png](http://upload-images.jianshu.io/upload_images/3156309-b2d9b60a36a523bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800)
 
 5. 运行调试配置
-![运行调试配置.png](http://upload-images.jianshu.io/upload_images/3156309-5b1ba27432794ff0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![run&debug.png](http://upload-images.jianshu.io/upload_images/3156309-5b1ba27432794ff0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800)
