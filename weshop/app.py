@@ -54,6 +54,9 @@ def configure_blueprints(app):
     from .shop import weshop as weshop_blueprint
     app.register_blueprint(weshop_blueprint, url_prefix='/weshop')
 
+    from .wechat import wechat as wechat_blueprint
+    app.register_blueprint(wechat_blueprint, url_prefix='/wechat')
+
 
 def configure_error_handlers(app):
 

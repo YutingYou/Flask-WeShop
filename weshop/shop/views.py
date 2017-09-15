@@ -30,10 +30,10 @@ def quickbuy():
         if form.validate_on_submit():
             logger.debug('new order, name: %s, phone: %s, addr: %s' %
                          (form.custom_name.data, form.custom_phone.data, form.custom_addr.data))
-            return '成功提交订单，进入支付流程'
+            return '成功提交订单，进入支付流程'  # TODO
         elif form.errors:
             logger.debug('error: %s' % form.errors)
-            return '订单参数输入错误，红色文字标出错误项'
+            return '订单参数输入错误，红色文字标出错误项'  # TODO
         return render_template('weshop/quickbuy.html', form=form, to_str=str, form_errors=form.errors)
 
 

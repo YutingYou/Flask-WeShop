@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 日志级别大小关系为：CRITICAL > ERROR > WARNING > INFO > DEBUG > NOTSET
 """
