@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import functools
 from flask import render_template, redirect, abort, request, session
-from wechatpy import WeChatClient, WeChatOAuth
+from wechatpy import WeChatClient, WeChatOAuth, WeChatPay
 from wechatpy import parse_message, create_reply
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidAppIdException
@@ -11,30 +11,38 @@ from weshop.utils import ezlogger
 from configs.config import Config
 from . import wechat
 from .chatbot import bot_reply
+
 logger = ezlogger.get_logger('wechat', use_stream=True)
 
-client = WeChatClient(Config. WECHAT_APP_ID, Config.WECHAT_APP_SECRET)
-oauth = WeChatOAuth(app_id='WECHAT_APP_ID',
-                    secret='WECHAT_APP_SECRET',
-                    redirect_uri='')
+wechat_client = WeChatClient(Config. WECHAT_APP_ID, Config.WECHAT_APP_SECRET)
+wechat_oauth = WeChatOAuth(app_id=Config.WECHAT_APP_ID,
+                           secret=Config.WECHAT_APP_SECRET,
+                           redirect_uri='')
+wechat_pay = WeChatPay(appid=Config.WECHAT_APP_ID,
+                       api_key=Config.WEPAY_API_KEY,
+                       mch_id=Config.WEPAY_MCH_ID,
+                       mch_cert=Config.WEPAY_MCH_CERT_PATH,
+                       mch_key=Config.WEPAY_MCH_KEY_PATH)
 
-client.menu.create({
-    "button":[
+wechat_client.menu.create({
+    "button": [
         {
-            "type":"view",
-            "name":"快速订水",
-            "url":"http://www.rockbot.top/mall/quickbuy"
+            "type": "view",
+            "name": "快速订水",
+            "url": "http://www.rockbot.top/weshop/quickbuy"
         },
         {
-            "type":"view",
-            "name":"水站商城",
-            "url":"http://www.qq.com"
+            "type": "view",
+            "name": "水站商城",
+            "url": "http://www.qq.com"
         }
     ]
 })
 
 
-def wechat_oauth(method):
+def wechat_oauth_decorator(method):
+    """微信鉴权，获取用户open id、user info"""
+
     @functools.wraps(method)
     def warpper(*args, **kwargs):
         if 'user_info' in session:
@@ -43,8 +51,8 @@ def wechat_oauth(method):
         code = request.args.get('code', None)
         if code:
             try:
-                res = oauth.fetch_access_token(code)
-                user_info = oauth.get_user_info(code)
+                res = wechat_oauth.fetch_access_token(code)
+                user_info = wechat_oauth.get_user_info(code)
                 logger.debug('code exit, get res: %s, user_info: %s' % (res, user_info))
             except Exception as e:
                 logger.debug('%s' % e)
@@ -53,16 +61,18 @@ def wechat_oauth(method):
             else:
                 session['user_info'] = user_info
         else:
-            oauth.redirect_uri = request.url
-            logger.debug('code NOT exit redirect to %s', oauth.authorize_url)
-            return redirect(oauth.authorize_url)
+            wechat_oauth.redirect_uri = request.url
+            logger.debug('code NOT exit redirect to %s', wechat_oauth.authorize_url)
+            return redirect(wechat_oauth.authorize_url)
 
         return method(*args, **kwargs)
     return warpper
 
 
 @wechat.route('/check', methods=['GET', 'POST'])
-def wechat():
+def wechat_check():
+    """微信服务器校验专用"""
+
     logger.debug('request values: %s' % request.values)
     logger.debug("request method: %s" % request.method)
     logger.debug(request.args)
@@ -93,12 +103,10 @@ def wechat():
         logger.debug('openid: %s' % openid)
 
         if openid is None:
-            return render_template('templates/403.html')
-
-        global user_open_id
-        user_open_id = openid
+            return render_template('403.html')
 
         # print('Raw message: \n%s' % request.data)
+        msg = None
         crypto = WeChatCrypto(Config.WECHAT_TOKEN, Config.WECHAT_AES_KEY, Config.WECHAT_APP_ID)
         try:
             msg = crypto.decrypt_message(
@@ -123,3 +131,4 @@ def wechat():
             nonce,
             timestamp
         )
+

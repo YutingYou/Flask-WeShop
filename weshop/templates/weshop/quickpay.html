@@ -1,0 +1,54 @@
+{% extends "weshop/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+{% endblock %}
+
+{% block title %}快速支付{% endblock %}
+
+{% block content %}
+<button class="btn btn-danger btn-lg " onclick="callpay()">立即购买</button>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+       //调用微信JS api 支付
+       function jsApiCall()
+       {
+           alert({{ params|safe  }});
+           WeixinJSBridge.invoke(
+           'getBrandWCPayRequest', {{ params|safe  }},
+            function (res)
+            {
+                WeixinJSBridge.log(res.err_msg);
+                alert(res.err_code + res.err_desc + res.err_msg);
+            }
+            );
+       };
+
+       function callpay()
+       {
+           if (typeof WeixinJSBridge == "undefined")
+           {
+               if (document.addEventListener)
+               {
+                   document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+               }
+               else if (document.attachEvent)
+               {
+                   document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                   document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+               }
+           }
+           else
+           {
+               jsApiCall();
+           }
+       }
+
+ </script>
+{% endblock %}
