@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 from chatterbot import ChatBot
-from chatterbot.trainers import ListTrainer
-
+# from chatterbot.trainers import ListTrainer
 
 chatbot = ChatBot("MrHippo",
-                  read_only=False, # read_only=False 允许被训练
+                  read_only=False,  # read_only=False 允许被训练
                   # storage_adapter="chatterbot.storage.MongoDatabaseAdapter",
-                  # database='chatterbot-database',
-                  storage_adapter='chatterbot.storage.JsonFileStorageAdapter', # 注：测试用，数据大时换高效数据库
+                  storage_adapter='chatterbot.storage.JsonFileStorageAdapter',  # 注：测试用，数据大时换高效数据库
                   database='./database.json',
-                  input_adapter='chatterbot.input.VariableInputTypeAdapter', # chatterbot.input.TerminalAdapter   chatterbot.input.VariableInputTypeAdapter
-                  output_adapter="chatterbot.output.OutputAdapter", # output_adapter='chatterbot.output.TerminalAdapter',   chatterbot.output.OutputAdapter
+                  input_adapter='chatterbot.input.VariableInputTypeAdapter',  # chatterbot.input.TerminalAdapter   chatterbot.input.VariableInputTypeAdapter
+                  output_adapter="chatterbot.output.OutputAdapter",  # output_adapter='chatterbot.output.TerminalAdapter',   chatterbot.output.OutputAdapter
                   output_format="text",
-                  logic_adapters=[ # 可以自己选择逻辑适配器，模块越多功能越丰富，回复优先级跟输配器顺序有关，按顺序处理，返回分数最高的适配器的回复。
+                  logic_adapters=[  # 可以自己选择逻辑适配器，模块越多功能越丰富，回复优先级跟输配器顺序有关，按顺序处理，返回分数最高的适配器的回复。
                       {
                           'import_path': 'chatterbot.logic.BestMatch'
                       },
@@ -34,7 +32,7 @@ chatbot = ChatBot("MrHippo",
                       # 'chatterbot.logic.MathematicalEvaluation', # 处理简单的数学问题
                       # 'chatterbot.logic.TimeLogicAdapter' # 处理时间问题
                   ],
-                trainer = 'chatterbot.trainers.ListTrainer'
+                  trainer='chatterbot.trainers.ListTrainer'
                   )
 
 
@@ -48,7 +46,7 @@ def bot_reply(msg):
 if __name__ == '__main__':
     while True:
         try:
-         bot_input = chatbot.get_response(None)
+            bot_input = chatbot.get_response(None)
 
         except(KeyboardInterrupt, EOFError, SystemExit):
             break
