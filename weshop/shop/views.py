@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from . import weshop
-from flask import render_template, request, session
+from flask import render_template, request, session, redirect, url_for
 from .forms import QuickBuyForm
+from .models import User
 from weshop.utils import ezlogger
 from weshop.wechat.views import wechat_oauth_decorator, wechat_pay
+from weshop.extensions import db
 import json
 
 logger = ezlogger.get_logger('quickbuy', use_stream=True, use_file=False)
@@ -17,7 +19,10 @@ def quickbuy():
 
     if request.method == 'GET':
         logger.debug('request method: %s' % request.method)
-        if True:
+        logger.debug('user: %r' % session['user_info'])
+        user = User.query.filter_by(openid=session['user_info']['openid']).first()
+        logger.debug('user: %s' % user)
+        if user:
             # 如果是老用户填充用户信息
             form = QuickBuyForm(goods_type='LSG',
                                 order_num=1,
@@ -35,25 +40,28 @@ def quickbuy():
                          (form.custom_name.data, form.custom_phone.data, form.custom_addr.data))
 
             # 成功提交订单，弹出支付请求
-            params = None
-            try:
-                result = wechat_pay.order.create('JSAPI', u'景田纯净水', 150, 'http://www.rockbot.top/weshop/jsapi_result/',
-                                                 user_id="oZkEowZadq8ajEcu3w4IbH0AcSRY")
-                params = wechat_pay.jsapi.get_jsapi_params(result['prepay_id'])
-                logger.debug('result:%s' % str(result))
-                logger.debug('params:%s' % str(params))
-                return render_template('weshop/quickpay.html', params=json.dumps(params))
-            except Exception as e:
-                logger.debug('pay result ERROR: %s' % e)
-                return '微信支付错误'  # TODO
+            return redirect(url_for('.quickpay'))
         elif form.errors:
             logger.debug('error: %s' % form.errors)
             return '订单参数输入错误，红色文字标出错误项'  # TODO
         return render_template('weshop/quickbuy.html', form=form, to_str=str, form_errors=form.errors)
 
 
-@weshop.route('/quickpay', methods=['GET', 'POST'])
+@weshop.route('/pay/test', methods=['GET', 'POST'])
 def quickpay():
+    params = None
+    try:
+        result = wechat_pay.order.create('JSAPI', u'景田纯净水', 150, 'http://www.rockbot.top/weshop/jsapi_result/',
+                                         user_id="")
+        params = wechat_pay.jsapi.get_jsapi_params(result['prepay_id'])
+        logger.debug('result:%s' % str(result))
+        logger.debug('params:%s' % str(params))
+        return render_template('weshop/quickpay.html', params=json.dumps(params))
+    except Exception as e:
+        logger.debug('pay result ERROR: %s' % e)
+        return '微信支付错误'  # TODO
+
+
     return render_template('weshop/quickpay.html', params=json.dumps(params))
 
 @weshop.route('/jsapi_pay_result/', methods=['GET', 'POST'])
