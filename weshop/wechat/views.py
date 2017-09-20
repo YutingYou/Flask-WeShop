@@ -12,7 +12,7 @@ from configs.config import Config
 from . import wechat
 from .chatbot import bot_reply
 
-logger = ezlogger.get_logger('wechat', use_stream=True)
+logger = ezlogger.get_logger('wechat', use_stream=False)
 
 wechat_client = WeChatClient(Config. WECHAT_APP_ID, Config.WECHAT_APP_SECRET)
 wechat_oauth = WeChatOAuth(app_id=Config.WECHAT_APP_ID,
@@ -121,7 +121,7 @@ def wechat_check():
         msg = parse_message(msg)
         if msg.type == 'text':
             reply = create_reply(bot_reply(msg.content), msg)
-            logger.debug('==msg.content:', msg.content, '==bot_reply(msg.content):', bot_reply(msg.content))
+            logger.debug('==msg.content: %s, ==bot_reply(msg.content): %s', (msg.content, bot_reply(msg.content)))
         else:
             reply = create_reply('对不起，懵逼了，我该说啥？？？', msg)
 
