@@ -9,6 +9,10 @@ class Config:
 
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
 
+    # 微信管理员账号
+    ADMIN_USERNAME = ''
+    ADMIN_OPENID = ''
+
     # 微信公众号配置
     WECHAT_APP_ID = ''
     WECHAT_TOKEN = ''
