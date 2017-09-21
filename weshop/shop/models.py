@@ -4,7 +4,7 @@ from weshop.extensions import db
 
 # 用户
 class User(db.Model):
-    __table_name_ = 'weshop_user'
+    __tablename__ = 'weshop_user'
     id = db.Column(db.Integer, primary_key=True)
     role = db.Column(db.Integer)
     openid = db.Column(db.String(64), unique=True)
@@ -27,13 +27,13 @@ class Goods(db.Model):
 class Order(db.Model):
     __tablename__ = 'weshop_order'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user_base_info.id'))
-    address = db.Column(db.Integer, db.ForeignKey('mall_user_addr.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('weshop_user.id'))
+    address = db.Column(db.Integer, db.ForeignKey('weshop_user_addr.id'))
     datetime = db.Column(db.DateTime)
 
 
 # 地址
 class Address(db.Model):
-    __tablename__ = 'mall_user_addr'
+    __tablename__ = 'weshop_user_addr'
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(128))
