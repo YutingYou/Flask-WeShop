@@ -12,7 +12,7 @@ from configs.config import Config
 from . import wechat
 from .chatbot import bot_reply
 
-logger = ezlogger.get_logger('wechat', use_stream=False)
+logger = ezlogger.get_logger('wechat', use_stream=True)
 
 wechat_client = WeChatClient(Config. WECHAT_APP_ID, Config.WECHAT_APP_SECRET)
 wechat_oauth = WeChatOAuth(app_id=Config.WECHAT_APP_ID,
@@ -103,6 +103,7 @@ def wechat_check():
         logger.debug('openid: %s' % openid)
 
         if openid is None:
+            logger.warn('wechat check NOT found openid!')
             return render_template('403.html')
 
         # print('Raw message: \n%s' % request.data)
