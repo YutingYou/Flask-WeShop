@@ -47,13 +47,12 @@ def quickbuy():
         return render_template('weshop/quickbuy.html', form=form, to_str=str, form_errors=form.errors)
 
 
-@weshop.route('/pay/test', methods=['GET', 'POST'])
+@weshop.route('/pay/', methods=['GET', 'POST'])
 def quickpay():
-    logger.debug('user: %r' % session['user_info'])
-    logger.debug('user: %s' % session['user_info']['openid'])
+    logger.debug('pay page, user: %r' % session['user_info'])
     params = None
     try:
-        result = wechat_pay.order.create('JSAPI', u'景田纯净水', 15, 'http://www.rockbot.top/weshop/jsapi_pay_result/',
+        result = wechat_pay.order.create('JSAPI', u'景田纯净水', 1, 'http://www.rockbot.top/weshop/jsapi_pay_result/',
                                          user_id=session['user_info']['openid'])
         params = wechat_pay.jsapi.get_jsapi_params(result['prepay_id'])
         logger.debug('result:%s' % str(result))
@@ -64,10 +63,16 @@ def quickpay():
         return '微信支付错误'  # TODO
 
 
-    return render_template('weshop/quickpay.html', params=json.dumps(params))
-
 @weshop.route('/jsapi_pay_result/', methods=['GET', 'POST'])
 def jsapi_result():
-    logger.debug('get result, %s' % request.values)
-    return 'get result'
+    xml = request.data
+    result = wechat_pay.parse_payment_result(xml)
+    logger.debug('%s, pay result, %s' % (request.method, result))
+
+    # 支付成功返回'SUCCESS', 失败则返回'FAIL'，微信收到这两个字符串后不再重试访问支付结果链接
+    # TODO
+    if True:
+        return 'SUCCESS'
+    else:
+        return 'FAIL'
 
