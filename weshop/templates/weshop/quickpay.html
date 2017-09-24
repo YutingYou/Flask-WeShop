@@ -19,9 +19,9 @@
        //调用微信JS api 支付
        function jsApiCall()
        {
-           alert({{ params|safe  }});
+           alert({{ params|safe }});
            WeixinJSBridge.invoke(
-           'getBrandWCPayRequest', {{ params|safe  }},
+           'getBrandWCPayRequest', {{ params|safe }},
             function (res)
             {
                 WeixinJSBridge.log(res.err_msg);

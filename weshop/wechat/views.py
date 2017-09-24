@@ -12,11 +12,13 @@ from configs.config import Config
 from . import wechat
 from .chatbot import bot_reply
 
-logger = ezlogger.get_logger('wechat', use_stream=True)
+
+logger = ezlogger.get_logger('wechat', use_stream=False)
 
 wechat_client = WeChatClient(Config. WECHAT_APP_ID, Config.WECHAT_APP_SECRET)
 wechat_oauth = WeChatOAuth(app_id=Config.WECHAT_APP_ID,
                            secret=Config.WECHAT_APP_SECRET,
+                           scope='snsapi_userinfo',
                            redirect_uri='')
 wechat_pay = WeChatPay(appid=Config.WECHAT_APP_ID,
                        api_key=Config.WEPAY_API_KEY,
@@ -51,7 +53,9 @@ def wechat_oauth_decorator(method):
         code = request.args.get('code', None)
         if code:
             try:
+                logger.debug('get access tocken...')
                 res = wechat_oauth.fetch_access_token(code)
+                logger.debug('get user info...')
                 user_info = wechat_oauth.get_user_info(code)
                 logger.debug('code exit, get res: %s, user_info: %s' % (res, user_info))
             except Exception as e:
@@ -122,7 +126,7 @@ def wechat_check():
         msg = parse_message(msg)
         if msg.type == 'text':
             reply = create_reply(bot_reply(msg.content), msg)
-            logger.debug('==msg.content: %s, ==bot_reply(msg.content): %s', (msg.content, bot_reply(msg.content)))
+            logger.debug('==msg.content: %s', msg.content)
         else:
             reply = create_reply('对不起，懵逼了，我该说啥？？？', msg)
 
