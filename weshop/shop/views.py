@@ -2,10 +2,11 @@
 from . import weshop
 from flask import render_template, request, session, redirect, url_for
 from .forms import QuickBuyForm
-from .models import User
+from .models import User, Order, Address, Goods
 from weshop.utils import ezlogger
 from weshop.wechat.views import wechat_oauth_decorator, wechat_pay
 from weshop.extensions import db
+from weshop.constants import Role
 import json
 
 logger = ezlogger.get_logger('quickbuy', use_stream=True, use_file=False)
@@ -17,27 +18,47 @@ def quickbuy():
 
     form = QuickBuyForm()
 
+    # 查询用户是否注册，未注册则注册
+    user = User.query.filter_by(openid=session['user_info']['openid']).first()
+
     if request.method == 'GET':
         logger.debug('request method: %s' % request.method)
         logger.debug('user: %r' % session['user_info'])
-        user = User.query.filter_by(openid=session['user_info']['openid']).first()
-        logger.debug('user: %s' % user)
-        if True:
-            # 如果是老用户填充用户信息
-            form = QuickBuyForm(goods_type='LSG',
-                                order_num=1,
-                                custom_addr='福清市城关小学后门7#803',
-                                custom_name='游先生',
-                                custom_phone='18503061799',
-                                delivery_date=0,
-                                delivery_time=11)
+
+        if user is None:
+            user = User(role=Role.USER,
+                        openid=session['user_info']['openid'],
+                        username=session['user_info']['nickname'],
+                        headimgurl=session['user_info']['headimgurl'],
+                        city=session['user_info']['city'],
+                        sex=session['user_info']['sex'],
+                        )
+            db.session.add(user)
+            db.session.commit()
+            logger.debug('db, add new user.')
+        else:
+            # 如果是老用户则查询最近订单快速填写订单
+            last_order = Order.query.filter_by(user_id=user.id).order_by(Order.id.desc()).first()
+            if last_order:
+                goods = Goods.query.filter_by(goods_id=last_order.goods_id).first()
+                address = Address.query.filter_by(address_id=last_order.address_id).first()
+                form = QuickBuyForm(goods_name=goods.name,
+                                    quantity=last_order.quantity,
+                                    custom_address=address.address,
+                                    custom_name=address.name,
+                                    custom_phone=address.phone,
+                                    delivery_date=last_order.delivery_date,
+                                    delivery_time=last_order.delivery_time)
+                logger.debug('old user, auto fill info.')
         return render_template('weshop/quickbuy.html', form=form)
     elif request.method == 'POST':
         logger.debug('request method: %s' % request.method)
         # 只有参数校验都通过时才提交
         if form.validate_on_submit():
             logger.debug('new order, name: %s, phone: %s, addr: %s' %
-                         (form.custom_name.data, form.custom_phone.data, form.custom_addr.data))
+                         (form.custom_name.data, form.custom_phone.data, form.custom_address.data))
+            order = Order()
+
 
             # 成功提交订单，弹出支付请求
             return redirect(url_for('.quickpay'))
