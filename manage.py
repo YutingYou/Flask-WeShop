@@ -3,7 +3,7 @@ import os
 from weshop import create_app
 from flask_script import Manager, Shell
 from weshop.extensions import db
-from weshop.shop.models import User
+from weshop.shop.models import User, Goods
 from weshop.constants import Role
 from configs.config import Config
 
@@ -23,11 +23,15 @@ def db_reset():
     db.create_all()
     print('db.create_all()')
 
+    # 添加管理员账号
     from sqlalchemy.exc import IntegrityError
     u = User(role=Role.ADMIN,
              username=Config.ADMIN_USERNAME,
              openid=Config.ADMIN_OPENID)
     db.session.add(u)
+
+    # 添加默认商品
+    goods = Goods()
 
     try:
         db.session.commit()
